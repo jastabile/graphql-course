@@ -7,16 +7,32 @@ type Link = {
   description: string;
 }
 
+const links: Link[] = [{
+  id: '1',
+  url: 'www.howtographql.com',
+  description: 'Hello description'
+}]
+
 const resolvers = {
   Query: {
-    info: () => 'lala',
-    feed: () => [{id: 1, url: 'asdf', description: 'first link'}]
+    info: () => `Testing GraphQL`,
+    feed: () => links,
   },
-  Link: {
-    id: (parent: Link) => parent.id,
-    description: (parent: Link) => parent.description,
-    url: (parent: Link) => parent.url,
-  }
+  Mutation: {
+    post: (parent: unknown, args: { description: string, url: string }) => {
+      let idCount = links.length;
+
+      const link: Link = {
+        id: `${idCount++}`,
+        description: args.description,
+        url: args.url,
+      };
+
+      links.push(link);
+
+      return link;
+    },
+  },
 }
 
 export const schema = makeExecutableSchema({
